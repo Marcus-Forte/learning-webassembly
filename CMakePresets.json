@@ -1,0 +1,46 @@
+{
+    "version": 3,
+    "configurePresets": [
+        {
+            "name": "wasm-base",
+            "hidden": true,
+            "binaryDir": "${sourceDir}/build/",
+            "cacheVariables": {
+                "CMAKE_TOOLCHAIN_FILE": "/emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake"
+            }
+        },
+        {
+            "name": "wasm-debug",
+            "displayName": "WebAssembly Debug",
+            "description": "Emscripten — Debug",
+            "inherits": "wasm-base",
+            "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" }
+        },
+        {
+            "name": "wasm-release",
+            "displayName": "WebAssembly Release",
+            "description": "Emscripten — Release",
+            "inherits": "wasm-base",
+            "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" }
+        },
+        {
+            "name": "native-base",
+            "hidden": true,
+            "binaryDir": "${sourceDir}/build_native/"
+        },
+        {
+            "name": "native-debug",
+            "displayName": "Native Debug",
+            "description": "Host compiler — Debug",
+            "inherits": "native-base",
+            "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" }
+        },
+        {
+            "name": "native-release",
+            "displayName": "Native Release",
+            "description": "Host compiler — Release",
+            "inherits": "native-base",
+            "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" }
+        }
+    ]
+}

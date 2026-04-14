@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello WebAssembly</title>
+    <style>
+        body { font-family: sans-serif; margin: 2rem; max-width: 960px; background: #1e1e1e; color: #ccc; }
+        h1 { margin-bottom: 0.25rem; }
+        pre { background: #2a2a2a; padding: 1rem; border-radius: 6px; font-size: 0.95rem;
+              color: #4a90d9; min-height: 3rem; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <h1>Hello WebAssembly</h1>
+    <script>
+        var Module = {
+            onRuntimeInitialized: function() {
+                const result = Module.ccall('add', 'number', ['number', 'number'], [3, 4]);
+                console.log('add(3, 4) =', result);
+            }
+        };
+    </script>
+    <script src="wasm/hello_wasm.js"></script>
+</body>
+</html>

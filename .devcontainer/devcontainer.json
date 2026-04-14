@@ -1,0 +1,25 @@
+// devcontainer for WebAssembly development
+{
+	"name": "learning-webassembly",
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
+
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-vscode.cpptools-extension-pack",
+				"llvm-vs-code-extensions.vscode-clangd",
+				"ms-vscode.cmake-tools"
+			],
+			"settings": {
+				"C_Cpp.intelliSenseEngine": "disabled"
+			}
+		}
+	},
+
+	"mounts": [
+		"source=learning-wasm-build-cache,target=${containerWorkspaceFolder}/build,type=volume",
+		"source=learning-wasm-build-native-cache,target=${containerWorkspaceFolder}/build_native,type=volume"
+	]
+}
