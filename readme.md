@@ -12,8 +12,19 @@ Open the project in VS Code and select **Reopen in Container** when prompted. Th
 
 | Target | Description |
 |---|---|
-| `hello_wasm` | Hello-world demo. Exports a C++ `add(a, b)` function callable from JS. |
-| `bench_wasm` | Benchmark suite. Exports `wasm_find_primes`, `wasm_mat_mul` (via Eigen), and `wasm_sort`. |
+| `hello_wasm` | Hello-world demo. Exports a C++ `add(a, b)` function callable from JS. Emscripten generates the shell HTML automatically (`-o hello_wasm.html`). |
+| `bench_wasm` | Benchmark suite comparing C++/WASM against equivalent JavaScript implementations. |
+
+### Benchmark functions
+
+| Function | Description |
+|---|---|
+| `wasm_find_primes(n)` | Sieve of Eratosthenes — counts primes up to N |
+| `wasm_mat_mul(data, out, n)` | N×N matrix self-multiply via [Eigen](https://eigen.tuxfamily.org/) |
+| `wasm_sort(data, size)` | In-place `std::sort` of a double array |
+| `wasm_hashmap_insert(n)` | Insert N key-value pairs into `std::unordered_map` |
+| `wasm_fibonacci(n)` | Iterative Fibonacci — returns fib(N) as `double` |
+| `wasm_mandelbrot(size, max_iter)` | Sum of escape iterations over a size×size Mandelbrot grid |
 
 ## Build
 
