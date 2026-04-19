@@ -2,6 +2,7 @@
 #include <vector>
 #include <cmath>
 #include <algorithm>
+#include <chrono>
 #include <Eigen/Dense>
 
 #ifndef __EMSCRIPTEN__
@@ -24,18 +25,29 @@ int main(int argc, char** argv) {
     }
     int n = std::atoi(argv[1]);
 
-    int primes = wasm_find_primes(n);
-    std::cout << "Primes up to " << n << ": " << primes << "\n";
+    using clock = std::chrono::high_resolution_clock;
+    using ms = std::chrono::duration<double, std::milli>;
 
-    std::vector<double> mat(static_cast<size_t>(n) * n, 1.0);
-    std::vector<double> out(static_cast<size_t>(n) * n);
-    wasm_mat_mul(mat.data(), out.data(), n);
-    std::cout << "Mat mul " << n << "x" << n << " done. out[0]=" << out[0] << "\n";
+    auto t0 = clock::now();
+    int primes = wasm_find_primes(n);
+    double primes_ms = ms(clock::now() - t0).count();
+    std::cout << "Primes up to " << n << ": " << primes << "  (" << primes_ms << " ms)\n";
 
     std::vector<double> arr(n);
     for (int i = 0; i < n; ++i) arr[i] = static_cast<double>(n - i);
+    t0 = clock::now();
     wasm_sort(arr.data(), n);
-    std::cout << "Sort " << n << " elements done. arr[0]=" << arr[0] << "\n";
+    double sort_ms = ms(clock::now() - t0).count();
+    std::cout << "Sort " << n << " elements done. arr[0]=" << arr[0] << "  (" << sort_ms << " ms)\n";
+
+    std::vector<double> mat(static_cast<size_t>(n) * n, 1.0);
+    std::vector<double> out(static_cast<size_t>(n) * n);
+    t0 = clock::now();
+    wasm_mat_mul(mat.data(), out.data(), n);
+    double matmul_ms = ms(clock::now() - t0).count();
+    std::cout << "Mat mul " << n << "x" << n << " done. out[0]=" << out[0] << "  (" << matmul_ms << " ms)\n";
+
+
 #endif
 
     return 0;

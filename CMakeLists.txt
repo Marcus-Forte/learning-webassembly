@@ -16,8 +16,8 @@ if(EMSCRIPTEN)
     # -flto         : link-time optimisation (inlines across TUs)
     # --closure 1   : minify the JS glue with the Closure Compiler
     # -msimd128     : enable WebAssembly SIMD128 (allows Eigen to auto-vectorise)
-    add_compile_options(-O3 -flto)
-    add_link_options(-O3 -flto --closure 1 -msimd128 )
+    add_compile_options(-O3 -flto -msimd128)
+    add_link_options(-O3 -flto --closure 1 -msimd128)
 
     set_target_properties(hello_wasm PROPERTIES
         SUFFIX ".js"
@@ -59,4 +59,8 @@ if(EMSCRIPTEN)
         DEPENDS bench_wasm hello_wasm
         COMMENT "Copying WASM artifacts to web/wasm/"
     )
+    else()
+    message(STATUS "Native build")
+    # This doesn't seem to make a difference, but eigen documentation recommends.
+    target_compile_options(bench_wasm PRIVATE -march=native)
 endif()
