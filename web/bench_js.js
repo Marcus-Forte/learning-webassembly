@@ -63,3 +63,48 @@ document.getElementById('js-sort').addEventListener('click', () => {
     document.getElementById('res-js-sort').textContent = ms + ' ms';
     console.log(`[JS] sort(${g_sort_n.toLocaleString()}): first=${g_sort_work[0].toFixed(6)} last=${g_sort_work[g_sort_n-1].toFixed(6)} in ${ms} ms`);
 });
+
+document.getElementById('js-hashmap').addEventListener('click', () => {
+    const n = getInputN('input-hashmap-n');
+    const t0 = performance.now();
+    const m = new Map();
+    for (let i = 0; i < n; i++) m.set(i, i * 2);
+    const elapsed = (performance.now() - t0).toFixed(2);
+    document.getElementById('res-js-hashmap').textContent = elapsed + ' ms';
+    console.log(`[JS] hashmap_insert(${n.toLocaleString()}): size=${m.size} in ${elapsed} ms`);
+});
+
+document.getElementById('js-fib').addEventListener('click', () => {
+    const n = getInputN('input-fib-n');
+    const t0 = performance.now();
+    let a = 0, b = 1;
+    for (let i = 2; i <= n; i++) { const c = a + b; a = b; b = c; }
+    const result = n <= 1 ? n : b;
+    const elapsed = (performance.now() - t0).toFixed(2);
+    document.getElementById('res-js-fib').textContent = elapsed + ' ms';
+    console.log(`[JS] fibonacci(${n.toLocaleString()}) = ${result} in ${elapsed} ms`);
+});
+
+document.getElementById('js-mandelbrot').addEventListener('click', () => {
+    const size = getInputN('input-mandelbrot-size');
+    const maxIter = getInputN('input-mandelbrot-iters');
+    const t0 = performance.now();
+    let total = 0;
+    for (let py = 0; py < size; py++) {
+        for (let px = 0; px < size; px++) {
+            const x0 = (px / size) * 3.5 - 2.5;
+            const y0 = (py / size) * 2.0 - 1.0;
+            let x = 0, y = 0, iter = 0;
+            while (x * x + y * y <= 4.0 && iter < maxIter) {
+                const xt = x * x - y * y + x0;
+                y = 2 * x * y + y0;
+                x = xt;
+                iter++;
+            }
+            total += iter;
+        }
+    }
+    const elapsed = (performance.now() - t0).toFixed(2);
+    document.getElementById('res-js-mandelbrot').textContent = elapsed + ' ms';
+    console.log(`[JS] mandelbrot(${size}x${size}, ${maxIter}): total=${total} in ${elapsed} ms`);
+});

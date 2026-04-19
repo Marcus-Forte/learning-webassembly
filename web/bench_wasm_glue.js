@@ -50,7 +50,7 @@ var Module = {
         matCppBtn.addEventListener('click', () => {
             const n = g_matmul_n;
             const t0 = performance.now();
-            Module.ccall('wasm_mat_mul', null, ['number', 'number', 'number'], [g_wasm_ptr, g_wasm_out_ptr, n]);
+            Module._wasm_mat_mul(g_wasm_ptr, g_wasm_out_ptr, n);
             const ms = (performance.now() - t0).toFixed(2);
             const out = new Float64Array(Module.HEAPF64.buffer, g_wasm_out_ptr, n * n);
             document.getElementById('res-cpp-matmul').textContent = ms + ' ms';
@@ -83,11 +83,48 @@ var Module = {
             // Restore pristine into WASM heap (not timed)
             new Float64Array(Module.HEAPF64.buffer, g_sort_wasm_ptr, g_sort_n).set(g_sort_shared);
             const t0 = performance.now();
-            Module.ccall('wasm_sort', null, ['number', 'number'], [g_sort_wasm_ptr, g_sort_n]);
+            Module._wasm_sort(g_sort_wasm_ptr, g_sort_n);
             const ms = (performance.now() - t0).toFixed(2);
             const view = new Float64Array(Module.HEAPF64.buffer, g_sort_wasm_ptr, g_sort_n);
             document.getElementById('res-cpp-sort').textContent = ms + ' ms';
             console.log(`[C++] sort(${g_sort_n.toLocaleString()}): first=${view[0].toFixed(6)} last=${view[g_sort_n-1].toFixed(6)} in ${ms} ms`);
+        });
+
+        // hashmap_insert
+        const hashmapCppBtn = document.getElementById('cpp-hashmap');
+        hashmapCppBtn.disabled = false;
+        hashmapCppBtn.addEventListener('click', () => {
+            const n = parseInt(document.getElementById('input-hashmap-n').value, 10);
+            const t0 = performance.now();
+            const size = Module._wasm_hashmap_insert(n);
+            const ms = (performance.now() - t0).toFixed(2);
+            document.getElementById('res-cpp-hashmap').textContent = ms + ' ms';
+            console.log(`[C++] hashmap_insert(${n.toLocaleString()}): size=${size} in ${ms} ms`);
+        });
+
+        // fibonacci
+        const fibCppBtn = document.getElementById('cpp-fib');
+        fibCppBtn.disabled = false;
+        fibCppBtn.addEventListener('click', () => {
+            const n = parseInt(document.getElementById('input-fib-n').value, 10);
+            const t0 = performance.now();
+            const result = Module._wasm_fibonacci(n);
+            const ms = (performance.now() - t0).toFixed(2);
+            document.getElementById('res-cpp-fib').textContent = ms + ' ms';
+            console.log(`[C++] fibonacci(${n.toLocaleString()}) = ${result} in ${ms} ms`);
+        });
+
+        // mandelbrot
+        const mandelbrotCppBtn = document.getElementById('cpp-mandelbrot');
+        mandelbrotCppBtn.disabled = false;
+        mandelbrotCppBtn.addEventListener('click', () => {
+            const size = parseInt(document.getElementById('input-mandelbrot-size').value, 10);
+            const maxIter = parseInt(document.getElementById('input-mandelbrot-iters').value, 10);
+            const t0 = performance.now();
+            const total = Module._wasm_mandelbrot(size, maxIter);
+            const ms = (performance.now() - t0).toFixed(2);
+            document.getElementById('res-cpp-mandelbrot').textContent = ms + ' ms';
+            console.log(`[C++] mandelbrot(${size}x${size}, ${maxIter}): total=${total} in ${ms} ms`);
         });
     }
 };

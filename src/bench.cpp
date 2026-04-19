@@ -3,6 +3,7 @@
 #include <cmath>
 #include <algorithm>
 #include <chrono>
+#include <unordered_map>
 #include <Eigen/Dense>
 
 #ifndef __EMSCRIPTEN__
@@ -13,6 +14,9 @@ extern "C" {
     int wasm_find_primes(int n);
     void wasm_mat_mul(const double* data, double* out, int n);
     void wasm_sort(double* data, int size);
+    int wasm_hashmap_insert(int n);
+    double wasm_fibonacci(int n);
+    int wasm_mandelbrot(int size, int max_iter);
 }
 
 int main(int argc, char** argv) {
@@ -39,6 +43,21 @@ int main(int argc, char** argv) {
     wasm_sort(arr.data(), n);
     double sort_ms = ms(clock::now() - t0).count();
     std::cout << "Sort " << n << " elements done. arr[0]=" << arr[0] << "  (" << sort_ms << " ms)\n";
+
+    t0 = clock::now();
+    int map_size = wasm_hashmap_insert(n);
+    double hashmap_ms = ms(clock::now() - t0).count();
+    std::cout << "Hashmap insert " << n << " items: size=" << map_size << "  (" << hashmap_ms << " ms)\n";
+
+    t0 = clock::now();
+    double fib_result = wasm_fibonacci(n);
+    double fib_ms = ms(clock::now() - t0).count();
+    std::cout << "Fibonacci(" << n << ") = " << fib_result << "  (" << fib_ms << " ms)\n";
+
+    t0 = clock::now();
+    int mandelbrot_iters = wasm_mandelbrot(800, 1000);
+    double mandelbrot_ms = ms(clock::now() - t0).count();
+    std::cout << "Mandelbrot(800x800, 1000 iters): total=" << mandelbrot_iters << "  (" << mandelbrot_ms << " ms)\n";
 
     std::vector<double> mat(static_cast<size_t>(n) * n, 1.0);
     std::vector<double> out(static_cast<size_t>(n) * n);
@@ -77,5 +96,47 @@ extern "C" {
     // Sorts the array of doubles in-place (ascending).
     void wasm_sort(double* data, int size) {
         std::sort(data, data + size);
+    }
+
+    // Inserts n key-value pairs into an unordered_map and returns the final size.
+    int wasm_hashmap_insert(int n) {
+        std::unordered_map<int, int> m;
+        m.reserve(n);
+        for (int i = 0; i < n; ++i)
+            m[i] = i * 2;
+        return static_cast<int>(m.size());
+    }
+
+    // Iterative Fibonacci — returns fib(n) as double (handles large n without overflow trapping).
+    double wasm_fibonacci(int n) {
+        if (n <= 1) return static_cast<double>(n);
+        double a = 0.0, b = 1.0;
+        for (int i = 2; i <= n; ++i) {
+            double c = a + b;
+            a = b;
+            b = c;
+        }
+        return b;
+    }
+
+    // Counts total escape iterations across a size×size Mandelbrot grid.
+    int wasm_mandelbrot(int size, int max_iter) {
+        int total = 0;
+        for (int py = 0; py < size; ++py) {
+            for (int px = 0; px < size; ++px) {
+                float x0 = (px / static_cast<float>(size)) * 3.5f - 2.5f;
+                float y0 = (py / static_cast<float>(size)) * 2.0f - 1.0f;
+                float x = 0.0f, y = 0.0f;
+                int iter = 0;
+                while (x * x + y * y <= 4.0f && iter < max_iter) {
+                    float xt = x * x - y * y + x0;
+                    y = 2.0 * x * y + y0;
+                    x = xt;
+                    ++iter;
+                }
+                total += iter;
+            }
+        }
+        return total;
     }
 }

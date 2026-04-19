@@ -28,7 +28,7 @@ if(EMSCRIPTEN)
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/wasm"
     )
     target_link_options(bench_wasm PRIVATE
-        "SHELL:-s EXPORTED_FUNCTIONS=['_main','_wasm_find_primes','_wasm_mat_mul','_wasm_sort','_malloc','_free']"
+        "SHELL:-s EXPORTED_FUNCTIONS=['_main','_wasm_find_primes','_wasm_mat_mul','_wasm_sort','_wasm_hashmap_insert','_wasm_fibonacci','_wasm_mandelbrot','_malloc','_free']"
         "SHELL:-s EXPORTED_RUNTIME_METHODS=['ccall','HEAPF64']"
         "SHELL:-s NO_EXIT_RUNTIME=1"
         "SHELL:-s ALLOW_MEMORY_GROWTH=1"
