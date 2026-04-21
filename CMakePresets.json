@@ -14,14 +14,20 @@
             "displayName": "WebAssembly Debug",
             "description": "Emscripten — Debug",
             "inherits": "wasm-base",
-            "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" }
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
         },
         {
             "name": "wasm-release",
             "displayName": "WebAssembly Release",
             "description": "Emscripten — Release",
             "inherits": "wasm-base",
-            "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" }
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "WITH_OPENCV": "ON"
+            }
+            
         },
         {
             "name": "native-base",
@@ -33,14 +39,27 @@
             "displayName": "Native Debug",
             "description": "Host compiler — Debug",
             "inherits": "native-base",
-            "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" }
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
         },
         {
             "name": "native-release",
             "displayName": "Native Release",
             "description": "Host compiler — Release",
             "inherits": "native-base",
-            "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" }
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
         }
+    ],
+    "buildPresets": [
+        {
+            "name": "Verbose",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "wasm-release",
+            "verbose": true
+        }         
     ]
 }

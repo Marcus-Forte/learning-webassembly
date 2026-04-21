@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera Stream</title>
+    <style>
+        body { font-family: sans-serif; margin: 2rem; max-width: 960px; background: #1e1e1e; color: #ccc; }
+        h1 { margin-bottom: 0.25rem; }
+        .subtitle { color: #888; margin-bottom: 1.5rem; }
+
+        .controls { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; flex-wrap: wrap; }
+
+        button { padding: 0.35rem 0.9rem; font-size: 0.85rem; border: none; border-radius: 5px;
+                 cursor: pointer; font-weight: 600; }
+        .btn-start { background: #4a90d9; color: #fff; }
+        .btn-stop  { background: #c0392b; color: #fff; }
+        button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        select { background: #2a2a2a; color: #ccc; border: 1px solid #555;
+                 border-radius: 4px; padding: 0.25rem 0.5rem; font-size: 0.85rem; }
+
+        .video-wrap { position: relative; display: inline-block; }
+        video { display: block; max-width: 100%; border-radius: 6px; background: #111; border: 1px solid #333; }
+        .badge { position: absolute; top: 8px; left: 8px; background: #c0392b;
+                 color: #fff; font-size: 0.7rem; font-weight: 700; padding: 2px 7px;
+                 border-radius: 4px; letter-spacing: 0.08em; display: none; }
+        .badge.visible { display: block; }
+
+        .status { font-family: monospace; font-size: 0.85rem; color: #888; }
+        .status.ok  { color: #27ae60; }
+        .status.err { color: #c0392b; }
+        input[type=range] { accent-color: #4a90d9; width: 10rem; vertical-align: middle; }
+        .slider-label { font-size: 0.85rem; white-space: nowrap; }
+        canvas { display: block; max-width: 100%; border-radius: 6px; background: #111; border: 1px solid #333; }
+    </style>
+</head>
+<body>
+    <h1>Camera Stream</h1>
+
+    <div class="controls">
+        <button class="btn-start" id="btn-start">&#9654; Start Camera</button>
+        <button class="btn-stop"  id="btn-stop" disabled>&#9632; Stop</button>
+        <select id="select-device" title="Camera device"><option value="">— select device —</option></select>
+        <select id="select-facing" title="Facing mode">
+            <option value="user">Front camera</option>
+            <option value="environment">Rear camera</option>
+        </select>
+        <span class="status" id="status">Not started</span>
+        <label class="slider-label">Blur <span id="blur-val">15</span>px</label>
+        <input type="range" id="slider-blur" min="1" max="100" step="2" value="15">
+        <label class="slider-label">Scale <span id="scale-val">0.5</span>x</label>
+        <input type="range" id="slider-scale" min="0.1" max="1.0" step="0.05" value="0.5">
+    </div>
+
+    <div class="video-wrap">
+        <video id="video" autoplay playsinline muted style="display:none"></video>
+        <canvas id="canvas-out" width="640" height="480"></canvas>
+        <span class="badge" id="badge">LIVE</span>
+    </div>
+
+    <script src="wasm/bench_opencv.js"></script>
+    <script src="camera.js" defer></script>
+</body>
+</html>
