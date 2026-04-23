@@ -7,7 +7,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 option(WITH_OPENCV "Build bench_opencv with OpenCV via Gaussian blur demo (Emscripten only)" OFF)
 
 add_executable(hello_wasm src/hello.cpp)
-target_include_directories(hello_wasm PRIVATE include)
 
 add_executable(bench_wasm src/bench.cpp)
 target_include_directories(bench_wasm PRIVATE include /usr/include/eigen3)
@@ -17,18 +16,10 @@ if(EMSCRIPTEN)
     # -O3           : highest compiler optimisation level
     # -flto         : link-time optimisation (inlines across TUs)
     # --closure 1   : minify the JS glue with the Closure Compiler
-    # -msimd128     : enable WebAssembly SIMD128 (allows Eigen to auto-vectorise)
+    # -msimd128     : enable WebAssembly SIMD128
     add_compile_options(-O3 -flto -msimd128)
     add_link_options(-O3 -flto --closure 1 -msimd128)
 
-    set_target_properties(hello_wasm PROPERTIES
-        SUFFIX ".js"
-        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/wasm"
-    )
-    set_target_properties(bench_wasm PROPERTIES
-        SUFFIX ".js"
-        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/wasm"
-    )
     target_link_options(bench_wasm PRIVATE
         "SHELL:-s EXPORTED_FUNCTIONS=['_main','_wasm_find_primes','_wasm_mat_mul','_wasm_sort','_wasm_hashmap_insert','_wasm_fibonacci','_wasm_mandelbrot','_malloc','_free']"
         "SHELL:-s EXPORTED_RUNTIME_METHODS=['ccall','HEAPF64']"
@@ -45,16 +36,16 @@ if(EMSCRIPTEN)
     add_custom_target(copy_wasm ALL
         COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_SOURCE_DIR}/web/wasm"
         COMMAND ${CMAKE_COMMAND} -E copy
-            "${CMAKE_BINARY_DIR}/wasm/bench_wasm.js"
+            "${CMAKE_BINARY_DIR}/bench_wasm.js"
             "${CMAKE_SOURCE_DIR}/web/wasm/bench_wasm.js"
         COMMAND ${CMAKE_COMMAND} -E copy
-            "${CMAKE_BINARY_DIR}/wasm/bench_wasm.wasm"
+            "${CMAKE_BINARY_DIR}/bench_wasm.wasm"
             "${CMAKE_SOURCE_DIR}/web/wasm/bench_wasm.wasm"
         COMMAND ${CMAKE_COMMAND} -E copy
-            "${CMAKE_BINARY_DIR}/wasm/hello_wasm.js"
+            "${CMAKE_BINARY_DIR}/hello_wasm.js"
             "${CMAKE_SOURCE_DIR}/web/wasm/hello_wasm.js"
         COMMAND ${CMAKE_COMMAND} -E copy
-            "${CMAKE_BINARY_DIR}/wasm/hello_wasm.wasm"
+            "${CMAKE_BINARY_DIR}/hello_wasm.wasm"
             "${CMAKE_SOURCE_DIR}/web/wasm/hello_wasm.wasm"
         COMMAND ${CMAKE_COMMAND} -E echo
             "-- WASM artifacts copied to ${CMAKE_SOURCE_DIR}/web/wasm/"

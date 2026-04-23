@@ -25,7 +25,7 @@
             "inherits": "wasm-base",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
-                "WITH_OPENCV": "ON"
+                "WITH_OPENCV": "OFF"
             }
             
         },
