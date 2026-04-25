@@ -36,16 +36,16 @@ if(EMSCRIPTEN)
     add_custom_target(copy_wasm ALL
         COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_SOURCE_DIR}/web/wasm"
         COMMAND ${CMAKE_COMMAND} -E copy
-            "${CMAKE_BINARY_DIR}/bench_wasm.js"
+            "${CMAKE_BINARY_DIR}/bin/bench_wasm.js"
             "${CMAKE_SOURCE_DIR}/web/wasm/bench_wasm.js"
         COMMAND ${CMAKE_COMMAND} -E copy
-            "${CMAKE_BINARY_DIR}/bench_wasm.wasm"
+            "${CMAKE_BINARY_DIR}/bin/bench_wasm.wasm"
             "${CMAKE_SOURCE_DIR}/web/wasm/bench_wasm.wasm"
         COMMAND ${CMAKE_COMMAND} -E copy
-            "${CMAKE_BINARY_DIR}/hello_wasm.js"
+            "${CMAKE_BINARY_DIR}/bin/hello_wasm.js"
             "${CMAKE_SOURCE_DIR}/web/wasm/hello_wasm.js"
         COMMAND ${CMAKE_COMMAND} -E copy
-            "${CMAKE_BINARY_DIR}/hello_wasm.wasm"
+            "${CMAKE_BINARY_DIR}/bin/hello_wasm.wasm"
             "${CMAKE_SOURCE_DIR}/web/wasm/hello_wasm.wasm"
         COMMAND ${CMAKE_COMMAND} -E echo
             "-- WASM artifacts copied to ${CMAKE_SOURCE_DIR}/web/wasm/"
@@ -87,10 +87,8 @@ if(EMSCRIPTEN AND WITH_OPENCV)
     #   - generated headers (opencv_modules.hpp, cvconfig.h) land in <binary_dir>/opencv2/
     #     which means they are reached via ${CMAKE_BINARY_DIR}
     add_executable(bench_opencv src/bench_opencv.cpp)
-    set_target_properties(bench_opencv PROPERTIES
-        SUFFIX ".js"
-        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/wasm"
-    )
+
+
     target_link_options(bench_opencv PRIVATE
         "SHELL:-s EXPORTED_FUNCTIONS=['_wasm_gaussian_blur','_malloc','_free']"
         "SHELL:-s EXPORTED_RUNTIME_METHODS=['HEAPU8']"
@@ -109,10 +107,10 @@ if(EMSCRIPTEN AND WITH_OPENCV)
 
     add_custom_target(copy_opencv ALL
         COMMAND ${CMAKE_COMMAND} -E copy
-            "${CMAKE_BINARY_DIR}/wasm/bench_opencv.js"
+            "${CMAKE_BINARY_DIR}/bin/bench_opencv.js"
             "${CMAKE_SOURCE_DIR}/web/wasm/bench_opencv.js"
         COMMAND ${CMAKE_COMMAND} -E copy
-            "${CMAKE_BINARY_DIR}/wasm/bench_opencv.wasm"
+            "${CMAKE_BINARY_DIR}/bin/bench_opencv.wasm"
             "${CMAKE_SOURCE_DIR}/web/wasm/bench_opencv.wasm"
         COMMAND ${CMAKE_COMMAND} -E echo
             "-- OpenCV WASM artifacts copied to ${CMAKE_SOURCE_DIR}/web/wasm/"
